@@ -147,7 +147,7 @@ The application provides the following functionalities:
 To process the invoices, run the following command in the `backend` directory:
 
 ```sh
-npx ts-node src/extractAndStore.ts
+npx ts-node src/utils/extractAndStore.ts
 ```
 
 This script reads PDF files, extracts the relevant data, and stores it in the PostgreSQL database.
