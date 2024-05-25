@@ -18,5 +18,5 @@ model Invoice {
   energyCompensatedQty     Float
   energyCompensatedValue   Float
   publicLightingValue      Float
-  fileName                 String
+  fileName                  String
 }
