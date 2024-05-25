@@ -6,7 +6,10 @@ const app = express();
 
 const allowedOrigins =
   process.env.NODE_ENV === 'production'
-    ? 'https://pdf-extractor-react-d87ce.web.app'
+    ? [
+        'https://pdf-extractor-app.uc.r.appspot.com',
+        'https://pdf-extractor-react-d87ce.web.app',
+      ]
     : 'http://localhost:3000';
 
 app.use(

@@ -185,3 +185,15 @@ This script reads PDF files, extracts the relevant data, and stores it in the Po
    ```
 
 By following these steps, you should be able to set up and run the PDF extractor application successfully. If you encounter any issues, please check the logs and ensure that all prerequisites are met.
+
+### Environment Variables
+
+1. **.env.development**
+
+NODE_ENV=development
+DATABASE_URL=postgresql://postgres:mysecretpassword@localhost:5432/pdfextractor_db
+
+2. **.env.production**
+
+NODE_ENV=production
+DATABASE_URL=postgresql://postgres:mysecretpassword@34.132.206.96:5432/pdfextractor_db
