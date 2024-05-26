@@ -13,18 +13,19 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
         'https://pdf-extractor-react-d87ce.web.app',
     ]
     : ['http://localhost:3000'];
-// const corsOptions = {
-//   origin: (origin: any, callback: any) => {
-//     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   credentials: true,
-// };
-app.use((0, cors_1.default)());
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+};
+app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 app.use(routes_1.default);
 const PORT = process.env.PORT || 3001;

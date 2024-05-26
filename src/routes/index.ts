@@ -2,9 +2,32 @@ import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import path from 'path';
 import fs from 'fs';
+import cors from 'cors';
 
 const router = Router();
 const prisma = new PrismaClient();
+
+const allowedOrigins =
+  process.env.NODE_ENV === 'production'
+    ? [
+        'https://pdf-extractor-app.uc.r.appspot.com',
+        'https://pdf-extractor-react-d87ce.web.app',
+      ]
+    : ['http://localhost:3000'];
+
+const corsOptions = {
+  origin: (origin: any, callback: any) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+};
+
+router.use(cors(corsOptions));
 
 // Route to get all invoices
 router.get('/invoices', async (req, res) => {
@@ -13,7 +36,7 @@ router.get('/invoices', async (req, res) => {
 });
 
 // Route to download an invoice
-router.get('/invoices/download/:fileName', (req, res) => {
+router.get('/invoices/download/:fileName', cors(corsOptions), (req, res) => {
   const fileName = req.params.fileName;
   const baseDir = path.join(__dirname, '../faturas');
 
