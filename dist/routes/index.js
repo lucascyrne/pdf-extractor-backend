@@ -23,6 +23,23 @@ router.get('/invoices', (req, res) => __awaiter(void 0, void 0, void 0, function
     const invoices = yield prisma.invoice.findMany();
     res.json(invoices);
 }));
+// Route to check if 'faturas' directory exists and list its contents
+router.get('/check-faturas', (req, res) => {
+    const baseDir = path_1.default.join(__dirname, '../faturas');
+    console.log(`Base directory: ${baseDir}`);
+    if (fs_1.default.existsSync(baseDir)) {
+        console.log(`Base directory exists.`);
+        const files = fs_1.default.readdirSync(baseDir);
+        console.log(`Contents of base directory: ${files.join(', ')}`);
+        return res
+            .status(200)
+            .json({ message: `Contents of base directory: ${files.join(', ')}` });
+    }
+    else {
+        console.error(`Base directory ${baseDir} not found.`);
+        return res.status(404).json({ message: 'Base directory not found' });
+    }
+});
 // Route to download an invoice
 router.get('/invoices/download/:fileName', (req, res) => {
     res.header('Access-Control-Allow-Origin', '*');
