@@ -16,30 +16,10 @@ const express_1 = require("express");
 const client_1 = require("@prisma/client");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const cors_1 = __importDefault(require("cors"));
 const storage_1 = require("@google-cloud/storage");
 const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
 const storage = new storage_1.Storage();
-const allowedOrigins = process.env.NODE_ENV === 'production'
-    ? [
-        'https://pdf-extractor-app.uc.r.appspot.com',
-        'https://pdf-extractor-react-d87ce.web.app',
-    ]
-    : ['http://localhost:3000'];
-const corsOptions = {
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        }
-        else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-};
-router.use((0, cors_1.default)(corsOptions));
 // Route to get all invoices
 router.get('/invoices', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const invoices = yield prisma.invoice.findMany();
@@ -73,11 +53,11 @@ const findFileInSubdirectoriesGCS = (bucketName, prefix, fileName) => __awaiter(
     return null;
 });
 // Route to download an invoice
-router.get('/invoices/download/:fileName', (0, cors_1.default)(corsOptions), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/invoices/download/:fileName', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const fileName = req.params.fileName;
     if (process.env.NODE_ENV === 'production') {
-        const bucketName = 'YOUR_BUCKET_NAME'; // Substitua pelo nome do seu bucket
-        const prefix = 'faturas/'; // Prefixo do diretório dentro do bucket
+        const bucketName = 'YOUR_BUCKET_NAME';
+        const prefix = 'faturas/';
         console.log(`Attempting to download file: ${fileName} from bucket: ${bucketName} with prefix: ${prefix}`);
         try {
             const filePath = yield findFileInSubdirectoriesGCS(bucketName, prefix, fileName);
