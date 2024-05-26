@@ -2,9 +2,32 @@ import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import path from 'path';
 import fs from 'fs';
+import cors from 'cors';
 
 const router = Router();
 const prisma = new PrismaClient();
+
+const allowedOrigins =
+  process.env.NODE_ENV === 'production'
+    ? [
+        'https://pdf-extractor-app.uc.r.appspot.com',
+        'https://pdf-extractor-react-d87ce.web.app',
+      ]
+    : ['http://localhost:3000'];
+
+const corsOptions = {
+  origin: (origin: any, callback: any) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+};
+
+router.use(cors(corsOptions));
 
 // Route to get all invoices
 router.get('/invoices', async (req, res) => {
@@ -12,30 +35,8 @@ router.get('/invoices', async (req, res) => {
   res.json(invoices);
 });
 
-// Route to check if 'faturas' directory exists and list its contents
-router.get('/check-faturas', (req, res) => {
-  const baseDir = path.join(__dirname, '../faturas');
-
-  console.log(`Base directory: ${baseDir}`);
-  if (fs.existsSync(baseDir)) {
-    console.log(`Base directory exists.`);
-    const files = fs.readdirSync(baseDir);
-    console.log(`Contents of base directory: ${files.join(', ')}`);
-    return res
-      .status(200)
-      .json({ message: `Contents of base directory: ${files.join(', ')}` });
-  } else {
-    console.error(`Base directory ${baseDir} not found.`);
-    return res.status(404).json({ message: 'Base directory not found' });
-  }
-});
-
 // Route to download an invoice
-router.get('/invoices/download/:fileName', (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
+router.get('/invoices/download/:fileName', cors(corsOptions), (req, res) => {
   const fileName = req.params.fileName;
   const baseDir = path.join(__dirname, '../faturas');
 
@@ -85,6 +86,7 @@ router.get('/invoices/download/:fileName', (req, res) => {
     res.download(filePath, (err) => {
       if (err) {
         console.error(`Error during file download: ${err}`);
+        return res.status(500).send('Error during file download');
       }
     });
   } else {
