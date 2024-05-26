@@ -44,7 +44,12 @@ router.get('/invoices', (req, res) => __awaiter(void 0, void 0, void 0, function
     res.json(invoices);
 }));
 // Route to download an invoice
-router.get('/invoices/download/:fileName', (0, cors_1.default)(corsOptions), (req, res) => {
+router.get('/invoices/download/:fileName', (0, cors_1.default)(corsOptions), (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*'); // Adiciona header CORS diretamente
+    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+}, (req, res) => {
     const fileName = req.params.fileName;
     const baseDir = path_1.default.join(__dirname, '../faturas');
     console.log(`Base directory: ${baseDir}`);
