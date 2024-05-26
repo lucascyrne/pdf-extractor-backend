@@ -2,12 +2,9 @@ import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import path from 'path';
 import fs from 'fs';
-import adminRouter from './admin';
 
 const router = Router();
 const prisma = new PrismaClient();
-
-router.use('/admin', adminRouter);
 
 // Route to get all invoices
 router.get('/invoices', async (req, res) => {
@@ -20,7 +17,9 @@ router.get('/invoices/download/:fileName', (req, res) => {
   const fileName = req.params.fileName;
   const baseDir = path.join(__dirname, '../faturas');
 
-  // Function to recursively search for the file in subdirectories
+  console.log(`Base directory: ${baseDir}`);
+  console.log(`File requested: ${fileName}`);
+
   const findFileInSubdirectories = (
     dir: string,
     file: string,
@@ -36,10 +35,12 @@ router.get('/invoices/download/:fileName', (req, res) => {
       const files = fs.readdirSync(dir);
       for (const fileOrDir of files) {
         const fullPath = path.join(dir, fileOrDir);
+        console.log(`Checking path: ${fullPath}`);
         if (fs.lstatSync(fullPath).isDirectory()) {
           const found = findFileInSubdirectories(fullPath, file, depth + 1);
           if (found) return found;
         } else if (fileOrDir === file) {
+          console.log(`File found: ${fullPath}`);
           return fullPath;
         }
       }
@@ -56,6 +57,7 @@ router.get('/invoices/download/:fileName', (req, res) => {
   }
 
   const filePath = findFileInSubdirectories(baseDir, fileName);
+  console.log(`File path found: ${filePath}`);
 
   if (filePath) {
     res.download(filePath, (err) => {

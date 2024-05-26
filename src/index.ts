@@ -10,16 +10,21 @@ const allowedOrigins =
         'https://pdf-extractor-app.uc.r.appspot.com',
         'https://pdf-extractor-react-d87ce.web.app',
       ]
-    : 'http://localhost:3000';
+    : ['http://localhost:3000'];
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: (origin: any, callback: any) => {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+};
 
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(routes);
 

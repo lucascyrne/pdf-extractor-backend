@@ -12,5 +12,6 @@ env_variables:
 entrypoint: npm run start
 
 handlers:
-  - url: /.*
-    script: auto
+  - url: /invoices/download/(.*)
+    static_files: src/faturas/\1
+    upload: src/faturas/(.*)
