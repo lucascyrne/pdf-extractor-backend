@@ -16,40 +16,18 @@ const express_1 = require("express");
 const client_1 = require("@prisma/client");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const cors_1 = __importDefault(require("cors"));
 const router = (0, express_1.Router)();
 const prisma = new client_1.PrismaClient();
-const allowedOrigins = process.env.NODE_ENV === 'production'
-    ? [
-        'https://pdf-extractor-app.uc.r.appspot.com',
-        'https://pdf-extractor-react-d87ce.web.app',
-    ]
-    : ['http://localhost:3000'];
-const corsOptions = {
-    origin: (origin, callback) => {
-        if (allowedOrigins.includes(origin) || !origin) {
-            callback(null, true);
-        }
-        else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-};
-router.use((0, cors_1.default)(corsOptions));
 // Route to get all invoices
 router.get('/invoices', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const invoices = yield prisma.invoice.findMany();
     res.json(invoices);
 }));
 // Route to download an invoice
-router.get('/invoices/download/:fileName', (0, cors_1.default)(corsOptions), (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*'); // Adiciona header CORS diretamente
+router.get('/invoices/download/:fileName', (req, res) => {
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-}, (req, res) => {
     const fileName = req.params.fileName;
     const baseDir = path_1.default.join(__dirname, '../faturas');
     console.log(`Base directory: ${baseDir}`);

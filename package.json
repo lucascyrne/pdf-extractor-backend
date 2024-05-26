@@ -6,6 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "NODE_ENV=development dotenv -e .env.development -- npx ts-node-dev src/index.ts",
     "build": "tsc",
+    "postbuild": "copyfiles -u 1 src/faturas dist",
     "start": "NODE_ENV=production node dist/index.js",
     "prisma:studio": "dotenv -e .env.development -- npx prisma studio",
     "prisma:migrate": "NODE_ENV=production npx prisma migrate deploy"
@@ -31,6 +32,7 @@
     "typescript": "^5.4.5"
   },
   "devDependencies": {
+    "copyfiles": "^2.4.1",
     "dotenv-cli": "^7.4.2"
   }
 }
