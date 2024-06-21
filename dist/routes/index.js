@@ -56,7 +56,7 @@ const findFileInSubdirectoriesGCS = (bucketName, prefix, fileName) => __awaiter(
 router.get('/invoices/download/:fileName', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const fileName = req.params.fileName;
     if (process.env.NODE_ENV === 'production') {
-        const bucketName = 'YOUR_BUCKET_NAME';
+        const bucketName = 'pdf-extractor-bucket';
         const prefix = 'faturas/';
         console.log(`Attempting to download file: ${fileName} from bucket: ${bucketName} with prefix: ${prefix}`);
         try {
